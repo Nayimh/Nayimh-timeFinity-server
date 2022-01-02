@@ -1,6 +1,9 @@
 const express = require('express');
 const app = express();
 const { MongoClient } = require('mongodb');
+
+const ObjectId = require('mongodb').ObjectId;
+
 const cors = require('cors');
 const port = process.env.PORT || 5000;
 
@@ -31,6 +34,22 @@ async function run() {
             const data = watchCollection.find({});
             const result = await data.toArray();
             res.json(result);
+        })
+
+        // get single product from db to ui
+        app.get('/watch/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const watch = await watchCollection.findOne(query);
+            res.json(watch);
+        })
+
+        // delete single product from ui
+        app.delete('/watch/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const remove = await watchCollection.deleteOne(query);
+            res.json(remove);
         })
 
     }
