@@ -23,6 +23,7 @@ async function run() {
         const watchCollection = database.collection('watch');
         const orderCollection = database.collection('orders');
         const ratingCollection = database.collection('ratings');
+        const usersCollection = database.collection('users');
 
 
         // post data from ui to db
@@ -109,6 +110,16 @@ async function run() {
             const order = await orderCollection.findOne(query);
             res.json(order);
         })
+
+        // get order by email filter
+        app.get('/orders/:email', async (req, res) => {
+            const email = req.params.email;
+            const cursor = orderCollection.find({});
+            const orders = await cursor.toArray();
+            const customerOrder = orders.filter(order => order.email === email);
+            res.json(customerOrder);
+        })
+
         // delete single product from ui and db
         app.delete('/orders/:id', async (req, res) => {
             const id = req.params.id;
@@ -116,6 +127,53 @@ async function run() {
             const remove = await orderCollection.deleteOne(query);
             res.json(remove);
         })
+
+        // ---------------user section ----------
+        // post user from ui to db
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const result = await usersCollection.insertOne(user);
+            res.json(result);
+        })
+
+        // upsert user
+        app.put('/users', async (req, res) => {
+            const user = req.body;
+            const filter = { email: user.email };
+            const option = { upsert: true };
+            const updateUser = { $set: user };
+            const result = await usersCollection.updateOne(filter, updateUser, option);
+            res.json(result);
+        })
+
+        // make admin
+        app.put('/users/admin', async (req, res) => {
+            const user = req.body;
+            const filter = { email: user.email };
+            const makeAdmin = { $set: { role: 'admin' } };
+            const result = await usersCollection.updateOne(filter, makeAdmin);
+            res.json(result);
+        })
+
+        // get oll users
+        app.get('/users', async (req, res) => {
+            const users = usersCollection.find({});
+            const result = await users.toArray();
+            res.json(result);
+        })
+
+        // admin filter from db to ui
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const user = await usersCollection.findOne(query);
+            let isAdmin = false;
+            if (user?.role === 'admin') {
+                isAdmin = true;
+            }
+            res.json({ admin: isAdmin });
+        })
+
 
     }
 
