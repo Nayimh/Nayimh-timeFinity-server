@@ -21,6 +21,7 @@ async function run() {
         await client.connect();
         const database = client.db('timeFinity');
         const watchCollection = database.collection('watch');
+        const orderCollection = database.collection('orders');
         const ratingCollection = database.collection('ratings');
 
 
@@ -83,6 +84,37 @@ async function run() {
             const query = { _id: ObjectId(id) };
             const remove = await ratingCollection.deleteOne(query);
             res.send(remove);
+        })
+
+        // ------------ order section -------------
+        // post order from ui to db
+        app.post('/orders', async(req, res) => {
+            const data = req.body;
+            const order = await orderCollection.insertOne(data);
+            res.json(order);
+        })
+
+        // get / load orders from db to ui
+        app.get('/orders', async (req, res) => {
+            const data = req.body;
+            const orders = orderCollection.find({});
+            const result = await orders.toArray();
+            res.json(result);
+        })
+
+        // get a single products from db
+        app.get('/orders/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const order = await orderCollection.findOne(query);
+            res.json(order);
+        })
+        // delete single product from ui and db
+        app.delete('/orders/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const remove = await orderCollection.deleteOne(query);
+            res.json(remove);
         })
 
     }
