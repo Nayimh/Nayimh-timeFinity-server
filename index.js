@@ -21,6 +21,8 @@ async function run() {
         await client.connect();
         const database = client.db('timeFinity');
         const watchCollection = database.collection('watch');
+        const ratingCollection = database.collection('ratings');
+
 
         // post data from ui to db
         app.post('/watch', async (req, res) => {
@@ -50,6 +52,37 @@ async function run() {
             const query = { _id: ObjectId(id) };
             const remove = await watchCollection.deleteOne(query);
             res.json(remove);
+        })
+
+        // ------------------ratings section----------------------
+        // post ratings from ui to db
+        app.post('/ratings', async (req, res) => {
+            const data = req.body;
+            const ratings = await ratingCollection.insertOne(data);
+            res.json(ratings);
+        })
+
+        // get/load rating from db to ui
+        app.get('/ratings', async (req, res) => {
+            const data = ratingCollection.find({});
+            const ratings = await data.toArray();
+            res.send(ratings);
+        })
+
+        // get single rating from db to ui
+        app.get('/ratings/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const rating = await ratingCollection.findOne(query);
+            res.json(rating);
+        })
+
+        // delete single rating from db and ui
+        app.delete('/ratings/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const remove = await ratingCollection.deleteOne(query);
+            res.send(remove);
         })
 
     }
