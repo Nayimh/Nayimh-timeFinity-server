@@ -19,29 +19,29 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         await client.connect();
-        const database = client.db('timeFinity');
-        const watchCollection = database.collection('watch');
+        const database = client.db('ClockFox');
+        const watchCollection = database.collection('products');
         const orderCollection = database.collection('orders');
-        const ratingCollection = database.collection('ratings');
+        const ratingCollection = database.collection('reviews');
         const usersCollection = database.collection('users');
 
 
         // post data from ui to db
-        app.post('/watch', async (req, res) => {
+        app.post('/products', async (req, res) => {
             const data = req.body;
             const result = await watchCollection.insertOne(data);
             res.json(result);
         })
 
         // get data from db to ui
-        app.get('/watch', async (req, res) => {
+        app.get('/products', async (req, res) => {
             const data = watchCollection.find({});
             const result = await data.toArray();
             res.json(result);
         })
 
         // get single product from db to ui
-        app.get('/watch/:id', async (req, res) => {
+        app.get('/products/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const watch = await watchCollection.findOne(query);
@@ -49,7 +49,7 @@ async function run() {
         })
 
         // delete single product from ui
-        app.delete('/watch/:id', async (req, res) => {
+        app.delete('/products/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const remove = await watchCollection.deleteOne(query);
@@ -58,21 +58,21 @@ async function run() {
 
         // ------------------ratings section----------------------
         // post ratings from ui to db
-        app.post('/ratings', async (req, res) => {
+        app.post('/reviews', async (req, res) => {
             const data = req.body;
             const ratings = await ratingCollection.insertOne(data);
             res.json(ratings);
         })
 
         // get/load rating from db to ui
-        app.get('/ratings', async (req, res) => {
+        app.get('/reviews', async (req, res) => {
             const data = ratingCollection.find({});
             const ratings = await data.toArray();
             res.send(ratings);
         })
 
         // get single rating from db to ui
-        app.get('/ratings/:id', async (req, res) => {
+        app.get('/reviews/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const rating = await ratingCollection.findOne(query);
@@ -80,7 +80,7 @@ async function run() {
         })
 
         // delete single rating from db and ui
-        app.delete('/ratings/:id', async (req, res) => {
+        app.delete('/reviews/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const remove = await ratingCollection.deleteOne(query);
