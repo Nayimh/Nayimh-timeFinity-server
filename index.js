@@ -29,7 +29,7 @@ async function run() {
         // get data from db to ui
         app.get('/watch', async (req, res) => {
             const data = watchCollection.find({});
-            const result = data.toArray();
+            const result = await data.toArray();
             res.json(result);
         })
 
