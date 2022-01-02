@@ -48,6 +48,19 @@ async function run() {
             res.json(watch);
         })
 
+        // Update Product Data
+    app.put('/products/:id', async(req,res) =>{
+        const updateProduct = req.body;
+        const id = req.params.id;
+        const query = { _id: ObjectId(id) };
+        const option = { upsert: true };
+        const updateDoc = {$set: {updateProduct}};
+        const result = await watchCollection.updateOne(query,updateDoc, option);
+        res.json(result);
+      })
+
+        
+
         // delete single product from ui
         app.delete('/products/:id', async (req, res) => {
             const id = req.params.id;
@@ -119,6 +132,18 @@ async function run() {
             const customerOrder = orders.filter(order => order.email === email);
             res.json(customerOrder);
         })
+
+        // update booking status
+        app.put('/orders/:id', async (req, res) => {
+            const id = req.params.id;
+            const orderstatus = req.body.status;
+            const filter = { _id: ObjectId(id) };
+            const updateOrder = { $set: { status: orderstatus } };
+            const options = { upsert: true };
+            const result = await orderCollection.updateOne(filter, updateOrder, options);
+            res.json(result);
+        });
+
 
         // delete single product from ui and db
         app.delete('/orders/:id', async (req, res) => {
