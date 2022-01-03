@@ -1,27 +1,28 @@
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 3030;
+const { MongoClient } = require('mongodb');
+
+const ObjectId = require('mongodb').ObjectId;
+
+const cors = require('cors');
+const port = process.env.PORT || 5000;
 
 require('dotenv').config();
 
-const cors = require('cors');
+// midleware
 app.use(cors());
 app.use(express.json());
 
-const { MongoClient } = require('mongodb');
-const ObjectId = require('mongodb').ObjectId;
-
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.p55ig.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.cetyr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 async function run() {
     try {
         await client.connect();
-        const database = client.db('ClockFox');
-
-        const productsCollection = database.collection('products');
-        const ordersCollection = database.collection('orders');
-        const reviewsCollection = database.collection('reviews');
+        const database = client.db('timeFinity');
+        const watchCollection = database.collection('products');
+        const orderCollection = database.collection('orders');
+        const ratingCollection = database.collection('reviews');
         const usersCollection = database.collection('users');
 
 
@@ -197,15 +198,13 @@ async function run() {
             }
             res.json({ admin: isAdmin });
         })
-
-
     }
+
     finally {
         // await client.close();
     }
-
 }
-run().catch(console.dir)
+run().catch(console.dir);
 
 app.get('/', (req, res) => {
     res.send('group task server is running');
