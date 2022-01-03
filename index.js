@@ -200,14 +200,14 @@ async function run() {
             res.json({ admin: isAdmin });
         })
 
-        // -------------------
+        // -----------------------
         // post contact from ui to db
         app.post('/contact', async (req, res) => {
             const data = req.body;
             const email = await contaactCollection.insertOne(data);
             res.json(email);
         })
-        
+        // ------
         // get contact info from db to ui
         app.get('/contact', async (req, res) => {
             const data = contaactCollection.find({});
