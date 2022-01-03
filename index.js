@@ -24,6 +24,7 @@ async function run() {
         const orderCollection = database.collection('orders');
         const ratingCollection = database.collection('reviews');
         const usersCollection = database.collection('users');
+        const contaactCollection = database.collection('contact')
 
 
         // post data from ui to db
@@ -199,6 +200,20 @@ async function run() {
             res.json({ admin: isAdmin });
         })
 
+        // -------------------
+        // post contact from ui to db
+        app.post('/contact', async (req, res) => {
+            const data = req.body;
+            const email = await contaactCollection.insertOne(data);
+            res.json(email);
+        })
+        
+        // get contact info from db to ui
+        app.get('/contact', async (req, res) => {
+            const data = contaactCollection.find({});
+            const contact = await data.toArray();
+            res.json(contact);
+        })
 
     }
 
