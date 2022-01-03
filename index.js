@@ -49,17 +49,17 @@ async function run() {
         })
 
         // Update Product Data
-    app.put('/products/:id', async(req,res) =>{
-        const updateProduct = req.body;
-        const id = req.params.id;
-        const query = { _id: ObjectId(id) };
-        const option = { upsert: true };
-        const updateDoc = {$set: {updateProduct}};
-        const result = await watchCollection.updateOne(query,updateDoc, option);
-        res.json(result);
-      })
+        app.put('/products/:id', async (req, res) => {
+            const updateProduct = req.body;
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const option = { upsert: true };
+            const updateDoc = { $set: { updateProduct } };
+            const result = await watchCollection.updateOne(query, updateDoc, option);
+            res.json(result);
+        })
 
-        
+
 
         // delete single product from ui
         app.delete('/products/:id', async (req, res) => {
@@ -102,7 +102,7 @@ async function run() {
 
         // ------------ order section -------------
         // post order from ui to db
-        app.post('/orders', async(req, res) => {
+        app.post('/orders', async (req, res) => {
             const data = req.body;
             const order = await orderCollection.insertOne(data);
             res.json(order);
@@ -205,7 +205,7 @@ async function run() {
     finally {
         // await client.close();
     }
-    
+
 }
 run().catch(console.dir);
 
